@@ -1,0 +1,66 @@
+1. System Preparation
+Update the package repository and upgrade existing packages to ensure compatibility.
+
+sudo apt update
+sudo apt upgrade -y
+
+2. Install Apache2
+Install the Apache web server package and verify that the service is running.
+
+sudo apt install apache2 -y
+sudo systemctl status apache2
+
+3. Firewall Setup
+Allow web traffic through the firewall using the pre-defined 'Apache' application profile.
+
+sudo ufw allow 'Apache'
+sudo ufw enable
+
+4. Setting up the Web Root
+Create a dedicated directory for your project files under /var/www/ and set the correct ownership and permissions for the ubuntu user.
+
+sudo mkdir /var/www/your_domain
+sudo chown -R ubuntu:ubuntu /var/www/your_domain
+sudo chmod -R 755 /var/www/your_domain
+
+5. Website Content
+Create a simple index.html file to test the configuration.
+
+sudo vi /var/www/your_domain/index.html
+
+<html>
+    <head>
+        <title>Welcome to Your_domain!</title>
+    </head>
+    <body>
+        <h1>Success! The your_domain virtual host is working!</h1>
+    </body>
+</html>
+
+6. Virtual Host Configuration
+Configure Apache to serve files from your specific directory by creating a new configuration file in sites-available.
+
+sudo vi /etc/apache2/sites-available/your_domain.conf
+
+<VirtualHost *:80>
+    ServerAdmin webmaster@localhost
+    ServerName your_domain
+    ServerAlias www.your_domain
+    DocumentRoot /var/www/
+    ErrorLog ${APACHE_LOG_DIR}/error.log
+    CustomLog ${APACHE_LOG_DIR}/access.log combined
+</VirtualHost>
+
+7. Activating the Configuration
+Enable the new site, disable the default Apache landing page, and restart the service.
+
+sudo a2ensite your_domain.conf
+sudo a2dissite 000-default.conf
+sudo apache2ctl configtest
+sudo systemctl restart apache2
+
+Testing the Setup
+To verify the installation, open your web browser and enter your server's public IP address:
+
+http://your_server_public_ip
+
